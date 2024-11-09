@@ -1,4 +1,4 @@
-name: Daily GitHub Streak Push
+name: GitHub Daily Push Automation
 
 # Daily planning 05:30 UTC+1 (France)
 on:
@@ -17,15 +17,15 @@ jobs:
         with:
           ref: main
 
-      - name: Update streak file
+      - name: Update streak log file
         run: |
           # Declaration of date and time variables
           date_part=$(date -d "+1 hour" +"%d %B %Y")
           time_part=$(date -d "+1 hour" +"%HH%M")
 
-          if [ -e streak.md ]; then
+          if [ -e streak_log.md ]; then
             # Read the last counter value from the file, if it exists
-            count=$(grep -oP '(?<=Counter: )\d+' streak.md)
+            count=$(grep -oP '(?<=Counter: )\d+' streak_log.md)
 
             # If the counter does not yet exist, initialize to 1
             if [ -z "$count" ]; then
@@ -36,17 +36,17 @@ jobs:
             fi
 
             # Add new line with increment
-            echo "📍 **Last MAJ:** $date_part at $time_part 🦾 **Counter:** $count  " >> streak.md
+            echo "📍 **Last MAJ:** $date_part at $time_part 🦾 **Counter:** $count  " >> streak_log.md
           else
             # If the file does not exist, create the file and initialize the counter to 1
-            echo "📍 **Last MAJ:** $date_part at $time_part 🦾 **Counter:** 1  " > streak.md
+            echo "📍 **Last MAJ:** $date_part at $time_part 🦾 **Counter:** 1  " > streak_log.md
           fi
 
       - name: Commit changes
         run: |
           git config --global user.name "Emmanuel Lefevre"
           git config --global user.email "${{ secrets.GITHUBEMAIL }}"
-          git add streak.md
+          git add streak_log.md
           git commit -m "Daily push"
 
       - name: Push changes
