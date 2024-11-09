@@ -1,0 +1,55 @@
+name: Daily GitHub Streak Push
+
+# Daily planning 05:30 UTC+1 (France)
+on:
+  schedule:
+    # UTC Format => 'Minute(0-59) Hour(0-23) Day(1-31) Month(1-12) DayWeek(0-6)/(Sunday to Saturday)'
+    - cron: '30 04 * * *'
+  workflow_dispatch:
+
+jobs:
+  daily-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: main
+
+      - name: Update streak file
+        run: |
+          # Declaration of date and time variables
+          date_part=$(date -d "+1 hour" +"%d %B %Y")
+          time_part=$(date -d "+1 hour" +"%HH%M")
+
+          if [ -e streak.md ]; then
+            # Read the last counter value from the file, if it exists
+            count=$(grep -oP '(?<=Counter: )\d+' streak.md)
+
+            # If the counter does not yet exist, initialize to 1
+            if [ -z "$count" ]; then
+              count=1
+            else
+              # Otherwise, increment the counter
+              count=$((count + 1))
+            fi
+
+            # Add new line with increment
+            echo "📍 **Last MAJ:** $date_part at $time_part 🦾 **Counter:** $count  " >> streak.md
+          else
+            # If the file does not exist, create the file and initialize the counter to 1
+            echo "📍 **Last MAJ:** $date_part at $time_part 🦾 **Counter:** 1  " > streak.md
+          fi
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "Emmanuel Lefevre"
+          git config --global user.email "${{ secrets.GITHUBEMAIL }}"
+          git add streak.md
+          git commit -m "Daily push"
+
+      - name: Push changes
+        run: git push --set-upstream origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
