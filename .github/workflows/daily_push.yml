@@ -39,9 +39,6 @@ jobs:
 
             # Add new line with increment
             echo "📍 **Last MAJ:** $date_part at $time_part 🦾 **Counter:** $count  " >> streak_log.md
-          else
-            # If the file does not exist, create the file and initialize the counter to 1
-            echo "📍 **Last MAJ:** $date_part at $time_part 🦾 **Counter:** 1  " > streak_log.md
           fi
 
       - name: Commit changes
