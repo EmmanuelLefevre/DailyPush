@@ -5,7 +5,6 @@ on:
   schedule:
     # UTC Format => 'Minute(0-59) Hour(0-23) Day(1-31) Month(1-12) DayWeek(0-6)/(Sunday to Saturday)'
     - cron: '30 04 * * *'
-  workflow_dispatch:
 
 jobs:
   daily-push:
@@ -20,13 +19,11 @@ jobs:
       - name: Update streak log file
         run: |
           # Declaration of date and time variables
-          date_part=$(date -u +"%d %B %Y" -d "1 hour")
-          time_part=$(date -u +"%H:%M" -d "1 hour")
+          date_part=$(date -u "+1 hour" +"%d %B %Y")
+          time_part=$(date -u "+1 hour" +"%HH%M")
 
-          if [ -f streak_log.md ]; then
+          if [ -e streak_log.md ]; then
             # Read the last counter value from the file, if it exists
-            echo "📍 **Last MAJ:** $date_part at $time_part 🦾 **Counter:** 1  " > streak_log.md
-          else
             count=$(grep "Counter:" streak_log.md | tail -n 1 | awk '{print $NF}')
 
             # If the counter does not yet exist, initialize to 1
@@ -39,6 +36,9 @@ jobs:
 
             # Add new line with increment
             echo "📍 **Last MAJ:** $date_part at $time_part 🦾 **Counter:** $count  " >> streak_log.md
+          else
+            # If the file does not exist, create the file and initialize the counter to 1
+            echo "📍 **Last MAJ:** $date_part at $time_part 🦾 **Counter:** 1  " > streak_log.md
           fi
 
       - name: Commit changes
