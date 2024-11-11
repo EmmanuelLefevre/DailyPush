@@ -25,7 +25,7 @@ jobs:
 
           if [ -e streak_log.md ]; then
             # Read the last counter value from the file, if it exists
-            count=$(grep "Counter:" streak_log.md | tail -n 1 | awk '{print $NF}')
+            count=$(grep -oP '(?<=Counter: )\d+' streak_log.md)
 
             # If the counter does not yet exist, initialize to 1
             if [ -z "$count" ]; then
