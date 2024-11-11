@@ -20,8 +20,8 @@ jobs:
       - name: Update streak log file
         run: |
           # Declaration of date and time variables
-          date_part=$(date -u "+1 hour" +"%d %B %Y")
-          time_part=$(date -u "+1 hour" +"%HH%M")
+          date_part=$(date -u +"%d %B %Y" -d "1 hour")
+          time_part=$(date -u +"%HH%M" -d "1 hour")
 
           if [ -e streak_log.md ]; then
             # Read the last counter value from the file, if it exists
